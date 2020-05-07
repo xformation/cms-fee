@@ -41,7 +41,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/Fee
+    url: jdbc:postgresql://localhost:5432/fee
     username: Fee
     password:
     hikari:
@@ -134,4 +134,14 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+    influxDbUrl: http://influx.ems.com
+    influxDb: cmsdb
+    influxDbUsername: cms
+    influxDbPassword: cms
+    influxDbLogLevel: BASIC
+    secSrvUrl: http://security.ems.com
+    prefSrvUrl: http://preference.ems.com
+    cmsBackEndUrl: http://backend.ems.com
+    kafkaUrl: http://kafka.ems.com/kafka/send
+    kafkaIndexEvenFireUrl: http://elastic.ems.com/seach/fireEvent

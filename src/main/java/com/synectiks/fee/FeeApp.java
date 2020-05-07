@@ -1,32 +1,39 @@
 package com.synectiks.fee;
 
-import com.synectiks.fee.config.ApplicationProperties;
-import com.synectiks.fee.config.DefaultProfileUtil;
+import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.Collection;
 
-import io.github.jhipster.config.JHipsterConstants;
+import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Collection;
+import com.synectiks.fee.config.ApplicationProperties;
+import com.synectiks.fee.config.DefaultProfileUtil;
+import com.synectiks.fee.utils.SynectiksJPARepo;
+
+import io.github.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
+@EnableJpaRepositories(repositoryBaseClass = SynectiksJPARepo.class)
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-public class FeeApp implements InitializingBean {
+public class FeeApp {
 
     private static final Logger log = LoggerFactory.getLogger(FeeApp.class);
 
+    private static ConfigurableApplicationContext ctx = null;
+    
     private final Environment env;
+
+    private static String serverIp;
 
     public FeeApp(Environment env) {
         this.env = env;
@@ -39,8 +46,8 @@ public class FeeApp implements InitializingBean {
      * <p>
      * You can find more information on how profiles work with JHipster on <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
      */
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    public void initApplication() {
         Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
             log.error("You have misconfigured your application! It should not run " +
@@ -50,6 +57,7 @@ public class FeeApp implements InitializingBean {
             log.error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+        
     }
 
     /**
@@ -58,41 +66,49 @@ public class FeeApp implements InitializingBean {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(FeeApp.class);
+    	SpringApplication app = new SpringApplication(FeeApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
-        Environment env = app.run(args).getEnvironment();
-        logApplicationStartup(env);
-    }
+        ctx  = app.run(args);
+        Environment env = ctx.getEnvironment();
 
-    private static void logApplicationStartup(Environment env) {
         String protocol = "http";
         if (env.getProperty("server.ssl.key-store") != null) {
             protocol = "https";
         }
-        String serverPort = env.getProperty("server.port");
-        String contextPath = env.getProperty("server.servlet.context-path");
-        if (StringUtils.isBlank(contextPath)) {
-            contextPath = "/";
-        }
         String hostAddress = "localhost";
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
+            serverIp = hostAddress;
+        } catch (Exception e) {
             log.warn("The host name could not be determined, using `localhost` as fallback");
         }
         log.info("\n----------------------------------------------------------\n\t" +
                 "Application '{}' is running! Access URLs:\n\t" +
-                "Local: \t\t{}://localhost:{}{}\n\t" +
-                "External: \t{}://{}:{}{}\n\t" +
+                "Local: \t\t{}://localhost:{}\n\t" +
+                "External: \t{}://{}:{}\n\t" +
                 "Profile(s): \t{}\n----------------------------------------------------------",
             env.getProperty("spring.application.name"),
             protocol,
-            serverPort,
-            contextPath,
+            env.getProperty("server.port"),
             protocol,
             hostAddress,
-            serverPort,
-            contextPath,
+            env.getProperty("server.port"),
             env.getActiveProfiles());
     }
+
+    public static <T> T getBean(Class<T> cls) {
+		return ctx.getBean(cls);
+	}
+    
+    public static Environment getEnvironment() {
+		return ctx.getEnvironment();
+	}
+	
+	public static int getServerPort() {
+		return Integer.parseInt(ctx.getEnvironment().getProperty("server.port"));
+	}
+	
+	public static String getServer() {
+		return serverIp;
+	}
 }
