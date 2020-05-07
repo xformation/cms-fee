@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <!--
+        Added the entity DueDate.
+    -->
+    <changeSet id="20200507082554-1" author="jhipster">
+        <createTable tableName="due_date">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="payment_method" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="installments" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="day_desc" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="payment_day" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="frequency" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="branch_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

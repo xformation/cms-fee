@@ -1,0 +1,105 @@
+
+entity FeeCategory {
+	categoryName String 
+	description String 
+	status String 
+	createdBy String
+	createdOn LocalDate
+	updatedBy String
+	updatedOn LocalDate
+	startDate LocalDate
+	endDate LocalDate
+	branchId Long
+}
+
+entity FeeDetails {
+	feeParticularsName String 
+	feeParticularDesc  String 
+	studentType String
+	gender String
+	amount Float
+	status String
+	createdBy String
+	createdOn LocalDate
+	updatedBy String
+	updatedOn LocalDate
+	startDate LocalDate
+	endDate LocalDate
+	branchId Long
+	departmentId Long
+	batchId Long
+	facilityId Long,
+	transportRouteId Long,
+}
+
+entity DueDate {
+	paymentMethod String 
+	installments Long 
+	dayDesc String
+	paymentDay Long
+	frequency String
+	branchId Long
+}
+
+entity PaymentRemainder {
+	isAutoRemainder String 
+	isFirstPaymentRemainder String
+	firstPaymentRemainderDays Long
+	isSecondPaymentRemainder String
+	secondPaymentRemainderDays Long
+	isOverDuePaymentRemainder String
+	overDuePaymentRemainderAfterDueDateOrUntilPaid String
+	overDuePaymentRemainderDays Long
+	isRemainderRecipients String
+	remainderRecipients String
+	branchId Long
+}
+
+entity LateFee {
+	isAutoLateFee String 
+	lateFeeDays Long
+	chargeType String
+	fixedCharges Long
+	percentCharges String
+	lateFeeFrequency String
+	lateFeeRepeatDays Long
+	academicYearId Long
+	termId Long
+	branchId Long
+}
+
+entity Invoice {
+	invoiceNumber String 
+	amountPaid Long 
+	paymentDate LocalDate 
+	nextPaymentDate LocalDate 
+	outStandingAmount Long 
+	modeOfPayment String 
+	chequeNumber Long
+	demandDraftNumber Long
+	onlineTxnRefNumber String
+	paymentStatus String 
+	comments String 
+	updatedBy String 
+	bank String
+	updatedOn LocalDate 
+	academicYearId Long
+	branchId Long
+	departmentId Long
+	studentId Long
+}
+
+
+relationship ManyToOne {
+	
+	FeeDetails{feeCategory} to FeeCategory ,
+	
+	Invoice{feeCategory} to FeeCategory,
+	Invoice{feeDetails} to FeeDetails,
+	Invoice{dueDate} to DueDate,
+	Invoice{paymentRemainder} to PaymentRemainder
+
+}
+
+dto * with mapstruct
+service all with serviceImpl
