@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,6 @@ public class FeeCategoryResource {
 
     private static final String ENTITY_NAME = "feeFeeCategory";
 
-    @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final FeeCategoryService feeCategoryService;

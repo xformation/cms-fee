@@ -1,0 +1,630 @@
+scalar Date
+
+type Query {
+	searchInvoiceOnType(invoiceType:String,  branchId:Long, academicYearId:Long ): [CmsInvoice]
+	getInvoiceData(branchId:Long, academicYearId:Long): CmsInvoice
+	createFeeDataCache: FeeDataCache
+	createFeeSetupDataCache(branchId:Long, academicYearId: Long): FeeSetupDataCache
+}
+
+type Mutation {
+	addFeeCategory(input: AddFeeCategoryInput): [CmsFeeCategory]
+	updateFeeCategory(input: UpdateFeeCategoryInput): [CmsFeeCategory]
+	addFeeDetails(input: AddFeeDetailsInput): CmsFeeDetails
+	addDueDate(input: AddDueDateInput): AddDueDatePayload
+	updateDueDate(input: UpdateDueDateInput): UpdateDueDatePayload
+	addLateFee(input: AddLateFeeInput): AddLateFeePayload
+	updateLateFee(input: UpdateLateFeeInput): UpdateLateFeePayload
+	addPaymentRemainder(input: AddPaymentRemainderInput): AddPaymentRemainderPayload
+	updatePaymentRemainder(input: UpdatePaymentRemainderInput): UpdatePaymentRemainderPayload
+	saveDueDatePaymentRemLateFee(inputd: UpdateDueDateInput, inputp: UpdatePaymentRemainderInput, inputl: UpdateLateFeeInput): QueryResult
+	getFeeSettingData(branchId: Long): CmsFeeSettingsVo
+	getFeeSettingDueDateData(branchId: Long, paymentType: String): CmsFeeSettingsVo
+}
+
+type CmsFeeSettingsVo {
+	lateFeeId:										Long 	
+	isAutoLateFee:                                  String 	
+	lateFeeDays:                                    Long 	
+	chargeType:                                     String 	
+	fixedCharges:                                   Long 	
+	percentCharges:                                 String 	
+	lateFeeFrequency:                               String 	
+	lateFeeRepeatDays:                              Long 	
+	prId:                                           Long 	
+	isAutoRemainder:                                String 	
+	isFirstPaymentRemainder:                        String 	
+	firstPaymentRemainderDays:                      Long 	
+	isSecondPaymentRemainder:                       String 	
+	secondPaymentRemainderDays:                     Long 	
+	isOverDuePaymentRemainder:                      String 	
+	overDuePaymentRemainderAfterDueDateOrUntilPaid: String 	
+	overDuePaymentRemainderDays:                    Long 	
+	isRemainderRecipients:                          String 	
+	remainderRecipients:                            String 	
+	dueDateId:                                      Long 	
+	paymentMethod:                                  String 	
+	installments:                                   Long 	
+	paymentDay:                                     Long 	
+	frequency:                                      String 	
+}
+
+type QueryResult{
+	statusCode:	Int 	
+	statusDesc: String 	
+	entity:     String 	
+	status:     String 	
+}
+
+type UpdatePaymentRemainderPayload {
+	paymentRemainder: PaymentRemainder
+}
+
+input UpdatePaymentRemainderInput {
+	id:												Long 	
+	isAutoRemainder:                                String 	
+	isFirstPaymentRemainder:                        String 	
+	firstPaymentRemainderDays:                      Long 	
+	isSecondPaymentRemainder:                       String 	
+	secondPaymentRemainderDays:                     Long 	
+	isOverDuePaymentRemainder:                      String 	
+	overDuePaymentRemainderAfterDueDateOrUntilPaid: String 	
+	overDuePaymentRemainderDays:                    Long 	
+	isRemainderRecipients:                          String 	
+	remainderRecipients:                            String 	
+	branchId:                                       Long 	
+}
+
+type AddPaymentRemainderPayload {
+	paymentRemainder: PaymentRemainder
+}
+
+input AddPaymentRemainderInput {
+	id:												Long 	
+	isAutoRemainder:                                String 	
+	isFirstPaymentRemainder:                        String 	
+	firstPaymentRemainderDays:                      Long 	
+	isSecondPaymentRemainder:                       String 	
+	secondPaymentRemainderDays:                     Long 	
+	isOverDuePaymentRemainder:                      String 	
+	overDuePaymentRemainderAfterDueDateOrUntilPaid: String 	
+	overDuePaymentRemainderDays:                    Long 	
+	isRemainderRecipients:                          String 	
+	remainderRecipients:                            String 	
+	branchId:                                       Long 	
+}
+
+type UpdateLateFeePayload {
+    lateFee: LateFee
+}
+
+input UpdateLateFeeInput {
+	id:					Long 	
+	isAutoLateFee:      String 	
+	lateFeeDays:        Int 
+	chargeType:         String 	
+	fixedCharges:       Long 	
+	percentCharges:     String 	
+	lateFeeFrequency:   String 	
+	lateFeeRepeatDays:  Int 
+	branchId:           Long 	
+}
+
+type LateFee {
+	id:					Long 	
+	isAutoLateFee:      String 	
+	lateFeeDays:        Long 	
+	chargeType:         String 	
+	fixedCharges:       Long 	
+	percentCharges:     String 	
+	lateFeeFrequency:   String 	
+	lateFeeRepeatDays:  Long 	
+	academicYearId:     Long 	
+	termId:             Long 	
+	branchId:           Long 	
+}
+
+type AddLateFeePayload {
+    lateFee: LateFee
+}
+
+input AddLateFeeInput {
+	id:					Long 	
+	isAutoLateFee:      String 	
+	lateFeeDays:        Int 
+	chargeType:         String 	
+	fixedCharges:       Long 	
+	percentCharges:     String 	
+	lateFeeFrequency:   String 	
+	lateFeeRepeatDays:  Int 
+	branchId:           Long 	
+}
+
+type UpdateDueDatePayload{
+    dueDate: DueDate
+}
+
+input UpdateDueDateInput{
+    id: Long
+    paymentMethod: String
+    installments: Long
+    dayDesc: String
+    paymentDay: Long
+    frequency: String
+    branchId: Long
+}
+
+type AddDueDatePayload{
+    dueDate: DueDate
+}
+
+input AddDueDateInput {
+	id:				Long 	
+	paymentMethod:  String 	
+	installments:   Long 	
+	dayDesc:        String 	
+	paymentDay:     Long 	
+	frequency:      String 	
+	branchId:        Long 	
+}
+
+input AddFeeDetailsInput {
+	departmentId:		Long 
+	batchId:            Long 
+	feeCategoryId:      Long 
+	facilityId:         Long 
+	transportRouteId:   Long 
+}
+
+input UpdateFeeCategoryInput {
+    id:				Long 	
+	categoryName:   String 	
+	description:    String 	
+	status:         String 	
+	createdBy:      String 	
+	createdOn:      Date 	
+	updatedBy:      String 	
+	updatedOn:      Date 	
+	startDate:      Date 	
+	endDate:        Date 	
+	branchId:       Long 	
+	strCreatedOn:   String 	
+	strUpdatedOn:   String 	
+	strStartDate:   String 	
+	strEndDate:     String 	
+}
+
+input AddFeeCategoryInput {
+    id:				Long 	
+	categoryName:   String 	
+	description:    String 	
+	status:         String 	
+	createdBy:      String 	
+	createdOn:      Date 	
+	updatedBy:      String 	
+	updatedOn:      Date 	
+	startDate:      Date 	
+	endDate:        Date 	
+	branchId:       Long 	
+	strCreatedOn:   String 	
+	strUpdatedOn:   String 	
+	strStartDate:   String 	
+	strEndDate:     String 	
+}
+
+type CmsInvoice {
+	totalInvoice:			Long 			
+	totalPaidInvoice:       Long 			
+	totalUnPaidInvoice:     Long 			
+	totalCanceledInvoice:   Long 			
+	id:                     Long 			
+	invoiceNumber:          String 			
+	amountPaid:             Long 			
+	paymentDate:            Date 		
+	nextPaymentDate:        Date 		
+	outStandingAmount:      Long 			
+	modeOfPayment:          String 			
+	chequeNumber:           Long 			
+	demandDraftNumber:      Long 			
+	onlineTxnRefNumber:     String 			
+	paymentStatus:          String 			
+	comments:               String 			
+	updatedBy:              String 			
+	updatedOn:              Date 		
+	feeCategory:            FeeCategory 	
+	feeDetails:             FeeDetails 		
+	dueDate:                DueDate 		
+	paymentRemainder:		PaymentRemainder 
+	collegeId:				Long 			
+	branchId:               Long 			
+	academicYearId:         Long 			
+	student:                Student 		
+	academicYear:           AcademicYear 	
+	strPaymentDate:         String 			
+	strNextPaymentDate:     String 			
+	strUpdatedOn:           String 			
+	bank:                   String 			
+}
+
+type AcademicYear {
+	id:				Long 
+	description: 	String 
+	startDate:		Date 
+	endDate:        Date 
+	comments:		String 
+	createdBy:      String 
+	createdOn:		Date 	
+	updatedBy:      String 		
+	updatedOn:      Date 	
+	status:         String 		
+}
+
+type Student {
+	id:										Long 
+	studentName:				        	String 
+	studentMiddleName:                  	String 
+	studentLastName:                    	String 
+	fatherName:                         	String 
+	fatherMiddleName:                   	String 
+	fatherLastName:                     	String 
+	motherName:                         	String 
+	motherMiddleName:                   	String 
+	motherLastName:                     	String 
+	studentAadharNo:                    	String 
+	studentPanNo:                       	String 
+	studentSocialSecurityNo:            	String 
+	studentTaxReferenceNo:              	String 
+	studentBplNo:                       	String 
+	studentDrivingLicenseNo:            	String 
+	studentPassportNo:                  	String 
+	dateOfBirth:				        	Date 
+	placeOfBirth:				        	String 
+	religion:                           	String 
+	caste:                              	String 
+	subCaste:                           	String 
+	age:						        	Int 
+	sex:									String 
+	studentLocalAddress:                    String 
+	studentPermanentAddress:                String 
+	city:                                   String 
+	state:                                  String 
+	country:                                String 
+	pinCode:                                String 
+	studentPrimaryCellNumber:               String 
+	studentAlternateCellNumber:             String 
+	studentLandLinePhoneNumber:             String 
+	studentPrimaryEmailId:                  String 
+	studentAlternateEmailId:                String 
+	relationWithStudent:                    String 
+	emergencyContactName:                   String 
+	emergencyContactMiddleName:             String 
+	emergencyContactLastName:               String 
+	emergencyContactCellNumber:             String 
+	emergencyContactLandLinePhoneNumber:    String 
+	emergencyContactEmailId:                String 
+	studentImagePath:                       String 
+	admissionNo:                            String 
+	enrollmentNo:                           String 
+	rollNo:                                 String 
+	studentType:                            String 
+	fatherCellNumber:						String 
+	fatherEmailId:                          String 
+	fatherOccupation:                       String 
+	fatherOfficeEmailId:                    String 
+	fatherOfficeAddress:                    String 
+	fatherOfficeCellNumber:                 String 
+	fatherOfficeLandLinePhoneNumber:        String 
+	fatherAadharNo:                         String 
+	fatherPanNo:                            String 
+	fatherSocialSecurityNo:                 String 
+	fatherTaxReferenceNo:                   String 
+	fatherBplNo:                            String 
+	fatherDrivingLicenseNo:                 String 
+	fatherPassportNo:                       String 
+	fatherImagePath:                        String 
+	motherCellNumber:                       String 
+	motherEmailId:                          String 
+	motherOccupation:                       String 
+	motherOfficeEmailId:                    String 
+	motherOfficeAddress:                    String 
+	motherOfficeCellNumber:                 String 
+	motherOfficeLandLinePhoneNumber:        String 
+	motherAadharNo:							String 
+	motherPanNo:                            String 
+	motherSocialSecurityNo:                 String 
+	motherTaxReferenceNo:                   String 
+	motherBplNo:                            String 
+	motherDrivingLicenseNo:                 String 
+	motherPassportNo:                       String 
+	motherImagePath:                        String 
+	guardianName:                           String 
+	guardianMiddleName:                     String 
+	guardianLastName:                       String 
+	guardianAddress:                        String 
+	guardianCellNumber:                     String 
+	guardianLandLinePhoneNumber:            String 
+	guardianEmailId:                        String 
+	guardianOccupation:                     String 
+	guardianOfficeEmailId:                  String 
+	guardianOfficeAddress:                  String 
+	guardianOfficeCellNumber:               String 
+	guardianOfficeLandLinePhoneNumber:      String 
+	guardianImagePath:                      String 
+	isGuardianSponsorAgency:                String 
+	sponsorAgencyName:                      String 
+	sponsorAgencyRegistrationNo:            String 
+	sponsorAgencyAddress:                   String 
+	sponsorAgencyCellNumber:                String 
+	sponsorAgencyLandLineNumber:            String 
+	sponsorAgencyEmailId:                   String 
+	sponsorAgencyAppointeeName:				String 
+	sponsorAgencyAppointeeDesignation:      String 
+	sponsorAgencyAppointeeCellNumber:       String 
+	sponsorAgencyAppointeeLandLineNumber:   String 
+	sponsorAgencyAppointeeEmailId:          String 
+	sponsorAgencyAppointeeOfficeAddress:    String 
+	isPhysicallyChallenged:                 String 
+	detailsOfDisability:                    String 
+	disabilityCertificateNo:                String 
+	disabilityCertificateIssueAuthority:    String 
+	disabilityCertificateIssueDate:			Date 
+	percentagOfDisability:					Int 
+	bloodGroup:								String 
+	vaccinationDetails:                     String 
+	otherMedicalDetails:                    String 
+	status:                                 String 
+	createdBy:                              String 
+	createdOn:								Date 
+	updatedBy:								String 
+	updatedOn:								Date 
+	comments:								String 
+	departmentId:							Long 
+	branchId:                               Long 
+	sectionId:                              Long 
+	batchId:                                Long 
+	academicYearId:                         Long 
+	branchName:								String 
+	departmentName:                         String 
+	batchName:                              String 
+	sectionName:                            String 
+	academicYear:                           String 
+}
+
+type PaymentRemainder {
+	id:													Long 	
+	isAutoRemainder:                                    String 	
+	isFirstPaymentRemainder:                            String 	
+	firstPaymentRemainderDays:                          Long 	
+	isSecondPaymentRemainder:                           String 	
+	secondPaymentRemainderDays:                         Long 	
+	isOverDuePaymentRemainder:                          String 	
+	overDuePaymentRemainderAfterDueDateOrUntilPaid:     String 	
+	overDuePaymentRemainderDays:                        Long 	
+	isRemainderRecipients:                              String 	
+	remainderRecipients:                                String 	
+	branchId:                                           Long 	
+}
+
+type DueDate {
+	id:				Long 	
+	paymentMethod:  String 	
+	installments:   Long 	
+	dayDesc:        String 	
+	paymentDay:     Long 	
+	frequency:      String 	
+	branchId:       Long 	
+}
+
+type FeeDetails {
+	id: 					Long 
+	feeParticularsName:		String 
+	feeParticularDesc:      String 
+	studentType:            String 
+	gender:                 String 
+	amount:					Float 
+	status:					String 
+	createdBy:              String 
+	createdOn:				Date 
+	updatedBy:				String 
+	updatedOn:				Date 
+	startDate:              Date 
+	endDate:                Date 
+	branchId:				Long 
+	departmentId:           Long 
+	batchId:                Long 
+	facilityId:             Long 
+	transportRouteId:       Long 
+	feeCategory:			FeeCategory 
+}
+type FeeCategory {
+	id: 			Long 
+	categoryName:	String 
+	description:    String 
+	status:         String 
+	createdBy:      String 
+	createdOn:		Date 
+	updatedBy:		String 
+	updatedOn:		Date 
+	startDate:      Date 
+	endDate:        Date 
+	branchId:		Long 
+}
+
+type FeeDataCache {
+	branches: [Branch]
+}
+
+type FeeSetupDataCache {
+	departments: [Department]
+	batches: [Batch]
+	studentTypes: [Student]
+	genders: [String]
+	feeDetails: [CmsFeeDetails]
+	feeCategory: [CmsFeeCategory]
+	facility: [Facility]
+	transportRoute: [TransportRoute]
+}
+
+type TransportRoute {
+	id:					Long 	
+	routeName:          String 	
+	routeDetails:       String 	
+	routeMapUrl:        String 	
+	noOfStops:          Int 
+	routeFrequency:     String 	
+}
+
+type CmsFacility {
+	id: Long
+	name: String
+	status: String
+    startDate: Date
+    endDate: Date
+    suspandStartDate: Date
+    suspandEndDate: Date
+	academicYear: AcademicYear
+    branch: Branch
+	strStartDate: String
+	strEndDate: String
+	strSuspandStartDate: String
+	strSuspandEndDate: String
+	amount: Long
+}
+
+type CmsFeeCategory {
+	id:				Long 		
+	categoryName:   String 		
+	description:    String 		
+	status:         String 		
+	createdBy:      String 		
+	createdOn:      Date 	
+	updatedBy:      String 		
+	updatedOn:      Date 	
+	startDate:      Date 	
+	endDate:        Date 	
+	branchId:       Long 		
+	strCreatedOn:   String 		
+	strUpdatedOn:   String 		
+	strStartDate:   String 		
+	strEndDate:     String 		
+}
+
+type CmsFeeDetails {
+	id:					Long 			
+	feeParticularsName: String 			
+	feeParticularDesc:  String 			
+	studentType:        String 			
+	gender:             String 			
+	amount:             Float 			
+	status:             String 			
+	createdBy:          String 			
+	createdOn:          Date 		
+	updatedBy:          String 			
+	updatedOn:          Date 		
+	startDate:          Date 		
+	endDate:            Date 		
+	feeCategory:        FeeCategory 	
+	batchId:            Long 			
+	facility:           Facility 		
+	transportRoute:     TransportRoute 	
+	departmentId:       Long 			
+	strCreatedOn:       String 			
+	strUpdatedOn:       String 			
+	strStartDate:       String 			
+	strEndDate:         String 			
+}
+
+type Facility {
+	id:					Long 	
+	name:       		String 	
+	status:     		String 	
+	startDate:			Date 
+	endDate:            Date 
+	suspandStartDate:   Date 
+	suspandEndDate:     Date 
+	academicYearId:		Long 	
+	branchId:           Long 	
+	amount:             Long 	
+	branchName:         String 	
+	academicYearDesc:   String 	
+}
+
+type Batch {
+	id:			Long 
+	batch: 		String 
+	department:	Department
+}
+
+type Department {
+	id:				Long 		
+	name:           String 		
+	description:    String 		
+	deptHead:       String 		
+	comments:       String 		
+	createdBy:      String 		
+	createdOn:      Date 	
+	updatedBy:      String 		
+	updatedOn:      Date 	
+	status:         String 		
+	branch:         Branch 		
+	academicYear: 	AcademicYear
+}
+
+type Branch {
+	id:					Long 	
+	branchName:         String 
+	address:            String 
+	pinCode:            String 
+	branchHead:         String 
+	cellPhoneNo:        String 
+	landLinePhoneNo:    String 
+	emailId:            String 
+	faxNo:              String 
+	isMainBranch:       String 
+	startDate:			Date 	
+	createdBy:          String 		
+	createdOn:          Date 	
+	updatedBy:          String 		
+	updatedOn:          Date 	
+	status:             String 		
+	college:            College 	
+	city:               City 		
+	state:              State 		
+}
+
+type State {
+	id:				Long 	
+	stateName:      String 	
+	divisionType:   String 	
+	stateCode:      String 	
+	country:        Country 
+}
+
+type City {
+	id:			Long 	
+	cityName:   String 	
+	cityCode:   String 	
+	stdCode:    String 	
+	state:      State 	
+}
+
+type College {
+	id:					Long 		
+	collegeName:        String 		
+	logoFilePath:       String 		
+	logoFileName:       String 		
+	logoFileExtension:  String 		
+	createdBy:          String 		
+	createdOn:          Date 	
+	updatedBy:          String 		
+	updatedOn:          Date 	
+	status:             String 		
+	country:            Country 	
+}
+
+type Country {
+	id:				Long   
+	countryName:    String 
+	countryCode:    String 
+	isdCode:        String 
+}

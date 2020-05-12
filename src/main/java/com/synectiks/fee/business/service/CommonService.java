@@ -1,8 +1,13 @@
 package com.synectiks.fee.business.service;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +16,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.synectiks.fee.config.ApplicationProperties;
+import com.synectiks.fee.constant.CmsConstants;
 import com.synectiks.fee.domain.AcademicYear;
 import com.synectiks.fee.domain.Batch;
 import com.synectiks.fee.domain.Branch;
 import com.synectiks.fee.domain.Department;
+import com.synectiks.fee.domain.Facility;
+import com.synectiks.fee.domain.FeeCategory;
+import com.synectiks.fee.domain.FeeDetails;
 import com.synectiks.fee.domain.Section;
+import com.synectiks.fee.domain.TransportRoute;
+import com.synectiks.fee.domain.vo.CmsFeeDetails;
+import com.synectiks.fee.service.util.CommonUtil;
+import com.synectiks.fee.service.util.DateFormatUtil;
 
 @Component
 public class CommonService {
@@ -31,6 +44,10 @@ public class CommonService {
     @Autowired
     RestTemplate restTemplate;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    
     public AcademicYear getAcademicYearById(Long academicYearId) {
         if(academicYearId == null) {
             return null;
@@ -72,6 +89,16 @@ public class CommonService {
         Branch temp = this.restTemplate.getForObject(prefBranchUrl, Branch.class);
         return temp;
     }
+    public List<Branch> getAllBranches() {
+        String prefBranchUrl = applicationProperties.getPrefSrvUrl()+"/api/branch-by-filters?status=ACTIVE";
+        Branch[] temp = this.restTemplate.getForObject(prefBranchUrl, Branch[].class);
+        if(temp.length == 0) {
+        	return Collections.emptyList();
+        }
+        List<Branch> branchList = Arrays.asList(temp);
+        Collections.sort(branchList, (o1, o2) -> o2.getId().compareTo(o1.getId()));
+        return branchList;
+  	}
     
 	public Department getDepartmentById(Long id) {
         if(id == null) {
@@ -94,6 +121,18 @@ public class CommonService {
         return temp;
     }
 
+	public List<Batch> getAllBatches() {
+        logger.debug("Getting all Batches ");
+	    String prefBatchUrl = applicationProperties.getPrefSrvUrl()+"/api/batch-by-filters";
+	    Batch[] temp = this.restTemplate.getForObject(prefBatchUrl, Batch[].class);
+	    if(temp.length == 0) {
+	    	return Collections.emptyList();
+	    }
+	    List<Batch> batchList = Arrays.asList(temp);
+	    Collections.sort(batchList, (o1, o2) -> o1.getId().compareTo(o2.getId()));
+	    return batchList;
+    }
+	
 	public Section getSectionById(Long id) {
         if(id == null) {
             return null;
@@ -104,6 +143,90 @@ public class CommonService {
         return temp;
     }
 
+	public Facility getFacilityById(Long id) {
+        if(id == null) {
+            return null;
+        }
+        String prefUrl = applicationProperties.getPrefSrvUrl();
+        String prefSectionUrl = prefUrl+"/api/facility-by-id/"+id;
+        Facility temp = this.restTemplate.getForObject(prefSectionUrl, Facility.class);
+        return temp;
+    }
+	public List<Facility> getFacility(String filters) {
+		String prefUrl = applicationProperties.getPrefSrvUrl()+"/api/facility-by-filters";
+		if(CommonUtil.isNullOrEmpty(filters)) {
+			prefUrl = prefUrl + "?"+filters;
+		}
+        Facility[] temp = this.restTemplate.getForObject(prefUrl, Facility[].class);
+        
+	    if(temp.length == 0) {
+	    	return Collections.emptyList();
+	    }
+	    List<Facility> tpList = Arrays.asList(temp);
+	    Collections.sort(tpList, (o1, o2) -> o1.getId().compareTo(o2.getId()));
+	    return tpList;
+    }
+	public TransportRoute getTransportRouteById(Long id) {
+        if(id == null) {
+            return null;
+        }
+        String prefUrl = applicationProperties.getPrefSrvUrl();
+        String prefSectionUrl = prefUrl+"/api/transport-route-by-id/"+id;
+        TransportRoute temp = this.restTemplate.getForObject(prefSectionUrl, TransportRoute.class);
+        return temp;
+    }
+	
+	public List<TransportRoute> getTransportRoute(String filters) {
+		String prefUrl = applicationProperties.getPrefSrvUrl()+"/api/transport-route-by-filters";
+		if(CommonUtil.isNullOrEmpty(filters)) {
+			prefUrl = prefUrl + "?"+filters;
+		}
+        TransportRoute[] temp = this.restTemplate.getForObject(prefUrl, TransportRoute[].class);
+        
+	    if(temp.length == 0) {
+	    	return Collections.emptyList();
+	    }
+	    List<TransportRoute> tpList = Arrays.asList(temp);
+	    Collections.sort(tpList, (o1, o2) -> o1.getId().compareTo(o2.getId()));
+	    return tpList;
+    }
+	
+	public List<CmsFeeDetails> getFeeDetailsList(List<FeeCategory> feeCategoryList) throws ParseException, Exception{
+        if(feeCategoryList.size() == 0 ) {
+            logger.warn("FeeCategory list is empty. Returning empty fee details list.");
+            return Collections.emptyList();
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<FeeDetails> list = this.entityManager.createQuery("select l from FeeDetails l where l.feeCategory in (:fcList) ")
+            .setParameter("fcList", feeCategoryList)
+            .getResultList();
+        
+        List<CmsFeeDetails> ls = new ArrayList<>();
+        for(FeeDetails ff: list) {
+            CmsFeeDetails cfd = CommonUtil.createCopyProperties(ff, CmsFeeDetails.class);
+            if(ff.getStartDate() != null) {
+                cfd.setStrStartDate(DateFormatUtil.changeLocalDateFormat(ff.getStartDate(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+                cfd.setStartDate(null);
+            }
+            if(ff.getEndDate() != null) {
+                cfd.setStrEndDate(DateFormatUtil.changeLocalDateFormat(ff.getEndDate(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+                cfd.setEndDate(null);
+            }
+            if(ff.getCreatedOn() != null) {
+                cfd.setStrCreatedOn(DateFormatUtil.changeLocalDateFormat(ff.getCreatedOn(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+                cfd.setCreatedOn(null);
+            }
+            if(ff.getUpdatedOn() != null) {
+                cfd.setStrUpdatedOn(DateFormatUtil.changeLocalDateFormat(ff.getUpdatedOn(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+                cfd.setUpdatedOn(null);
+            }
+            ls.add(cfd);
+        }
+        logger.debug("Returning list of fee details from JPA criteria query. Total records : "+list.size());
+        return ls;
+    }
+	
 //	public List<Subject> findAllSubjectByDepartmentAndBatch(Long departmentId, Long batchId) {
 //		logger.debug("Getting subjects based on department id : "+departmentId+", and batch id : "+batchId);
 //	    String prefUrl = applicationProperties.getPrefSrvUrl();
