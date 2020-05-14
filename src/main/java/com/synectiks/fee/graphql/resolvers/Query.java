@@ -48,17 +48,14 @@ public class Query implements GraphQLQueryResolver {
     @Autowired
     private FeeCategoryRepository feeCategoryRepository;
     
-	// Needed
     public List<CmsInvoice> searchInvoiceOnType(String invoiceType, Long branchId, Long academicYearId) throws Exception{
         return Lists.newArrayList(invoiceFilterProcessor.searchInvoiceOnType(invoiceType, branchId, academicYearId));
     }
 
-    //Needed
     public CmsInvoice getInvoiceData(Long branchId, Long academicYearId) {
         return invoiceFilterProcessor.getInvoiceData(branchId, academicYearId);
     }
 
-    //Needed
     public FeeDataCache createFeeDataCache() throws Exception{
     	List<Branch> branchList = this.commonService.getAllBranches();
     	FeeDataCache cache = new FeeDataCache();
@@ -66,7 +63,6 @@ public class Query implements GraphQLQueryResolver {
     	return cache;
     }
 
-    	// Needed
     public FeeSetupDataCache createFeeSetupDataCache(Long branchId, Long academicYearId) {
     	try {
     		List<Batch> batchList = this.commonService.getAllBatches();
