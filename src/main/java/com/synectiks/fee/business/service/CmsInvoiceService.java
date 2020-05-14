@@ -2,7 +2,10 @@ package com.synectiks.fee.business.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.synectiks.fee.constant.CmsConstants;
 import com.synectiks.fee.domain.AcademicYear;
 import com.synectiks.fee.domain.Branch;
+import com.synectiks.fee.domain.DueDate;
+import com.synectiks.fee.domain.FeeCategory;
+import com.synectiks.fee.domain.FeeDetails;
 import com.synectiks.fee.domain.Invoice;
+import com.synectiks.fee.domain.PaymentRemainder;
 import com.synectiks.fee.domain.Student;
 import com.synectiks.fee.domain.vo.CmsInvoice;
 import com.synectiks.fee.repository.InvoiceRepository;
@@ -39,9 +46,229 @@ public class CmsInvoiceService {
     private EntityManager entityManager;
 
     @Autowired
-    CommonService commonService;
+    private CommonService commonService;
     
-
+    @Autowired
+    private CmsFeeCategoryService cmsFeeCategoryService;
+    
+    @Autowired
+    private CmsFeeDetailsService cmsFeeDetailsService;
+    
+    @Autowired
+    private CmsDueDateService cmsDueDateService;
+    
+    @Autowired
+    private CmsPaymentRemainderService cmsPaymentRemainderService;
+    
+    public List<Invoice> getInvoiceListOnFilterCriteria(Map<String, String> criteriaMap){
+    	Invoice inv = new Invoice();
+    	boolean isFilter = false;
+    	if(criteriaMap.get("id") != null) {
+    		inv.setId(Long.parseLong(criteriaMap.get("id")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("invoiceNumber") != null) {
+    		inv.setInvoiceNumber(criteriaMap.get("invoiceNumber"));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("amountPaid") != null) {
+    		inv.setAmountPaid(Long.parseLong(criteriaMap.get("amountPaid")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("paymentDate") != null) {
+    		inv.setPaymentDate(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("paymentDate"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("nextPaymentDate") != null) {
+    		inv.setNextPaymentDate(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("nextPaymentDate"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("outStandingAmount") != null) {
+    		inv.setOutStandingAmount(Long.parseLong(criteriaMap.get("outStandingAmount")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("modeOfPayment") != null) {
+    		inv.setModeOfPayment(criteriaMap.get("modeOfPayment"));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("chequeNumber") != null) {
+    		inv.setChequeNumber(Long.parseLong(criteriaMap.get("chequeNumber")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("demandDraftNumber") != null) {
+    		inv.setDemandDraftNumber(Long.parseLong(criteriaMap.get("demandDraftNumber")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("onlineTxnRefNumber") != null) {
+    		inv.setOnlineTxnRefNumber(criteriaMap.get("onlineTxnRefNumber"));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("paymentStatus") != null) {
+    		inv.setPaymentStatus(criteriaMap.get("paymentStatus"));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("comments") != null) {
+    		inv.setComments(criteriaMap.get("comments"));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("updatedBy") != null) {
+    		inv.setUpdatedBy(criteriaMap.get("updatedBy"));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("bank") != null) {
+    		inv.setBank(criteriaMap.get("bank"));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("updatedOn") != null) {
+    		inv.setUpdatedOn(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("updatedOn"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("academicYearId") != null) {
+    		inv.setAcademicYearId(Long.parseLong(criteriaMap.get("academicYearId")));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("branchId") != null) {
+    		inv.setBranchId(Long.parseLong(criteriaMap.get("branchId")));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("departmentId") != null) {
+    		inv.setDepartmentId(Long.parseLong(criteriaMap.get("departmentId")));
+    		isFilter = true;
+    	}
+    	if(criteriaMap.get("studentId") != null) {
+    		inv.setStudentId(Long.parseLong(criteriaMap.get("studentId")));
+    		isFilter = true;
+    	}
+    	
+    	if(criteriaMap.get("feeCategoryId") != null) {
+    		FeeCategory fc = this.cmsFeeCategoryService.getFeeCategory(Long.parseLong(criteriaMap.get("feeCategoryId")));
+    		if(fc != null) {
+    			inv.setFeeCategory(fc);
+        		isFilter = true;
+    		}
+    	}
+    	
+    	if(criteriaMap.get("feeDetailsId") != null) {
+    		FeeDetails fd = this.cmsFeeDetailsService.getFeeDetails(Long.parseLong(criteriaMap.get("feeDetailsId")));
+    		if(fd != null) {
+    			inv.setFeeDetails(fd);
+        		isFilter = true;
+    		}
+    	}
+    	
+    	if(criteriaMap.get("dueDateId") != null) {
+    		DueDate dd = this.cmsDueDateService.getDueDate(Long.parseLong(criteriaMap.get("dueDateId")));
+    		if(dd != null) {
+    			inv.setDueDate(dd);
+        		isFilter = true;
+    		}
+    	}
+    	
+    	if(criteriaMap.get("paymentRemainderId") != null) {
+    		PaymentRemainder pr = this.cmsPaymentRemainderService.getPaymentRemainder(Long.parseLong(criteriaMap.get("paymentRemainderId")));
+    		if(pr != null) {
+    			inv.setPaymentRemainder(pr);
+        		isFilter = true;
+    		}
+    	}
+    	
+    	List<Invoice> list = null;
+    	if(isFilter) {
+    		logger.debug("Filter criteria object : ",inv);
+    		list = this.invoiceRepository.findAll(Example.of(inv), Sort.by(Direction.DESC, "id"));
+    	}else {
+    		logger.debug("No filter criteria given");
+    		list = this.invoiceRepository.findAll(Sort.by(Direction.DESC, "id"));
+    	}
+        
+    	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
+    	return list;
+    }
+    
+    public List<CmsInvoice> getCmsInvoiceListOnFilterCriteria(Map<String, String> criteriaMap){
+    	List<Invoice> invList = getInvoiceListOnFilterCriteria(criteriaMap);
+    	List<CmsInvoice> list = new ArrayList<>();
+    	for(Invoice inv: invList) {
+    		CmsInvoice cmsInv = convertInvoiceToCmsInvoice(inv);
+    		list.add(cmsInv);
+    	}
+    	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
+    	return list;
+    }
+    
+    public List<Invoice> getInvoiceList(Long branchId) {
+    	List<Invoice> list = null;
+    	if(branchId != null) {
+    		Invoice dd = new Invoice();
+    		dd.setBranchId(branchId);
+    		list = this.invoiceRepository.findAll(Example.of(dd));
+    		logger.debug("Invoice list found for the given branch id. "+branchId+". List : ",list);
+    	}else {
+    		list = this.invoiceRepository.findAll();
+    	}
+        Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
+        return list;
+    }
+    
+    public List<CmsInvoice> getCmsInvoiceList(Long branchId) {
+    	List<Invoice> invList = getInvoiceList(branchId);
+    	List <CmsInvoice> list = new ArrayList<>();
+    	for(Invoice inv: invList) {
+    		CmsInvoice cinv = convertInvoiceToCmsInvoice(inv);
+    		list.add(cinv);
+    	}
+    	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
+        return list;
+    }
+    
+    public Invoice getInvoice(Long id){
+    	Optional<Invoice> inv = this.invoiceRepository.findById(id);
+    	if(inv.isPresent()) {
+    		logger.debug("Invoice object found for the given id. "+id);
+    		return inv.get();
+    	}
+    	logger.debug("Invoice object not found for the given id. "+id+". Returning null");
+        return null;
+    }
+    
+    public CmsInvoice getCmsInvoice(Long id){
+    	Invoice inv = getInvoice(id);
+    	if(inv != null) {
+    		CmsInvoice cinv = convertInvoiceToCmsInvoice(inv);
+    		logger.debug("CmsInvoice object found for the given id. "+id);
+    		return cinv;
+    	}
+    	logger.debug("CmsInvoice object not found for the given id. "+id+". Returning null");
+        return null;
+    }
+    
+    private CmsInvoice convertInvoiceToCmsInvoice(Invoice inv) {
+    	if(inv != null) {
+    		CmsInvoice cinv = CommonUtil.createCopyProperties(inv, CmsInvoice.class);
+    		if(inv.getPaymentDate() != null) {
+    			cinv.setStrPaymentDate(DateFormatUtil.changeLocalDateFormat(inv.getPaymentDate(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    			cinv.setPaymentDate(null);
+    		}
+    		if(inv.getNextPaymentDate() != null) {
+    			cinv.setStrNextPaymentDate(DateFormatUtil.changeLocalDateFormat(inv.getNextPaymentDate(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    			cinv.setNextPaymentDate(null);
+    		}
+    		if(inv.getUpdatedOn() != null) {
+    			cinv.setStrUpdatedOn(DateFormatUtil.changeLocalDateFormat(inv.getUpdatedOn(), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
+    			cinv.setUpdatedOn(null);
+    		}
+    		return cinv;
+    	}
+    	return null;
+    }
+    
 	public Long getTotalInvoice(Long branchId, Long academicYearId) {
     	Long a = getTotalPaidInvoice(branchId, academicYearId);
     	Long b = getTotalUnPaidInvoice(branchId, academicYearId);

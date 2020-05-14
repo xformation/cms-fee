@@ -1,11 +1,11 @@
 package com.synectiks.fee.security;
 
-import com.synectiks.fee.config.Constants;
-
 import java.util.Optional;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
+
+import com.synectiks.fee.config.Constants;
 
 /**
  * Implementation of {@link AuditorAware} based on Spring Security.
