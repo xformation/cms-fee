@@ -31,7 +31,7 @@ import com.synectiks.fee.service.util.CommonUtil;
 import com.synectiks.fee.service.util.DateFormatUtil;
 
 @Component
-public class CommonService {
+public class CommonService<T> {
 
     private final static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
@@ -170,18 +170,18 @@ public class CommonService {
         if(id == null) {
             return null;
         }
-        String prefUrl = applicationProperties.getPrefSrvUrl();
-        String prefSectionUrl = prefUrl+"/api/transport-route-by-id/"+id;
-        TransportRoute temp = this.restTemplate.getForObject(prefSectionUrl, TransportRoute.class);
+//        String prefUrl = applicationProperties.getPrefSrvUrl();
+        String url = applicationProperties.getTransportSrvUrl()+"/api/transport-route-by-id/"+id;
+        TransportRoute temp = this.restTemplate.getForObject(url, TransportRoute.class);
         return temp;
     }
 	
 	public List<TransportRoute> getTransportRoute(String filters) {
-		String prefUrl = applicationProperties.getPrefSrvUrl()+"/api/transport-route-by-filters";
+		String url = applicationProperties.getTransportSrvUrl()+"/api/transport-route-by-filters";
 		if(CommonUtil.isNullOrEmpty(filters)) {
-			prefUrl = prefUrl + "?"+filters;
+			url = url + "?"+filters;
 		}
-        TransportRoute[] temp = this.restTemplate.getForObject(prefUrl, TransportRoute[].class);
+        TransportRoute[] temp = this.restTemplate.getForObject(url, TransportRoute[].class);
         
 	    if(temp.length == 0) {
 	    	return Collections.emptyList();
@@ -225,6 +225,11 @@ public class CommonService {
         }
         logger.debug("Returning list of fee details from JPA criteria query. Total records : "+list.size());
         return ls;
+    }
+	
+	public List<T> getList(String url) {
+		List<T> temp = this.restTemplate.getForObject(url, List.class);
+        return temp;
     }
 	
 //	public List<Subject> findAllSubjectByDepartmentAndBatch(Long departmentId, Long batchId) {

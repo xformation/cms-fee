@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.google.common.collect.Lists;
 import com.synectiks.fee.business.service.CommonService;
+import com.synectiks.fee.config.ApplicationProperties;
 import com.synectiks.fee.constant.CmsConstants;
 import com.synectiks.fee.domain.Batch;
 import com.synectiks.fee.domain.Branch;
@@ -38,6 +39,8 @@ public class Query implements GraphQLQueryResolver {
 
 	private final static Logger logger = LoggerFactory.getLogger(Query.class);
     
+	@Autowired
+    private ApplicationProperties applicationProperties;
 	
 	@Autowired
 	private InvoiceFilterProcessor invoiceFilterProcessor;
@@ -65,8 +68,10 @@ public class Query implements GraphQLQueryResolver {
 
     public FeeSetupDataCache createFeeSetupDataCache(Long branchId, Long academicYearId) {
     	try {
-    		List<Batch> batchList = this.commonService.getAllBatches();
-
+    		String prefBatchUrl = applicationProperties.getPrefSrvUrl()+"/api/batch-by-filters";
+//    		List<Batch> batchList = this.commonService.getAllBatches(); for testing commented.
+    		List<Batch> batchList = this.commonService.getList(prefBatchUrl);
+    		
 //        	List<CmsStudentTypeVo> studentTypeList = this.commonService.getAllStudentTypes();
 //        	List<CmsGenderVo> genderList = this.commonService.getAllGenders();
 

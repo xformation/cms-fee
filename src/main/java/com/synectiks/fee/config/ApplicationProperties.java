@@ -25,6 +25,7 @@ public class ApplicationProperties {
 	private String msAuthenticationUrl;
 	private String paymentResponseUrl;
 	private String paymentRedirectUrl;
+	private String transportSrvUrl;
 	
 	public String getImagePath() {
 		return imagePath;
@@ -136,5 +137,13 @@ public class ApplicationProperties {
 
 	public void setPaymentRedirectUrl(String paymentRedirectUrl) {
 		this.paymentRedirectUrl = paymentRedirectUrl;
+	}
+
+	public String getTransportSrvUrl() {
+		return transportSrvUrl;
+	}
+
+	public void setTransportSrvUrl(String transportSrvUrl) {
+		this.transportSrvUrl = transportSrvUrl;
 	}
 }

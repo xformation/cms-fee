@@ -29,6 +29,8 @@ import com.synectiks.fee.domain.Invoice;
 import com.synectiks.fee.domain.PaymentRemainder;
 import com.synectiks.fee.domain.Student;
 import com.synectiks.fee.domain.vo.CmsInvoice;
+import com.synectiks.fee.graphql.types.invoice.AddInvoiceInput;
+import com.synectiks.fee.graphql.types.invoice.AddInvoicePayload;
 import com.synectiks.fee.repository.InvoiceRepository;
 import com.synectiks.fee.service.util.CommonUtil;
 import com.synectiks.fee.service.util.DateFormatUtil;
@@ -492,4 +494,60 @@ public class CmsInvoiceService {
     	return totalAmtOverDue ;
     }
 
+    public AddInvoicePayload addInvoice(AddInvoiceInput addInvoiceInput) {
+    	logger.debug("Start saving invoice");
+    	Invoice invoice   = new Invoice();
+        
+    	if(addInvoiceInput.getFeeCategoryId() != null) {
+    		FeeCategory feeCategory = this.cmsFeeCategoryService.getFeeCategory(addInvoiceInput.getFeeCategoryId());
+        	if(feeCategory != null) {
+        		invoice.setFeeCategory(feeCategory);
+        	}
+    	}
+    	if(addInvoiceInput.getFeeDetailsId() != null) {
+    		FeeDetails feeDetails = this.cmsFeeDetailsService.getFeeDetails(addInvoiceInput.getFeeDetailsId());
+    		if(feeDetails != null) {
+    			invoice.setFeeDetails(feeDetails);
+    		}
+        }
+    	if(addInvoiceInput.getDueDateId() != null) {
+    		DueDate dueDate = cmsDueDateService.getDueDate(addInvoiceInput.getDueDateId());
+    		if(dueDate != null) {
+    			invoice.setDueDate(dueDate);
+    	        
+    		}
+    	}
+    	if(addInvoiceInput.getPaymentRemainderId() != null) {
+    		PaymentRemainder paymentRemainder = cmsPaymentRemainderService.getPaymentRemainder(addInvoiceInput.getPaymentRemainderId());
+    		if(paymentRemainder != null) {
+    			invoice.setPaymentRemainder(paymentRemainder);
+    		}
+    	}
+        
+//        Student student = studentRepository.findById(addInvoiceInput.getStudentId()).get();
+        invoice.setStudentId(addInvoiceInput.getStudentId());
+        invoice.setBranchId(addInvoiceInput.getBranchId());
+        invoice.setAcademicYearId(addInvoiceInput.getAcademicyearId());
+        invoice.setAmountPaid(addInvoiceInput.getAmountPaid());
+        invoice.setModeOfPayment(addInvoiceInput.getModeOfPayment());
+        invoice.setChequeNumber(addInvoiceInput.getChequeNumber());
+        invoice.setDemandDraftNumber(addInvoiceInput.getDemandDraftNumber());
+        invoice.setUpdatedBy(addInvoiceInput.getUpdatedBy());
+        invoice.setUpdatedOn(LocalDate.now());
+        invoice.setPaymentStatus("PAID");
+        Long dt = System.currentTimeMillis();
+        invoice.setInvoiceNumber(String.valueOf(addInvoiceInput.getStudentId())+""+String.valueOf(dt));
+        invoice.setPaymentDate(LocalDate.now());
+        invoice.setBank(addInvoiceInput.getBank());
+        invoice.setOutStandingAmount(addInvoiceInput.getOutStandingAmount());
+        //        invoice.setNextPaymentDate();
+        
+//        invoice.setOnlineTxnRefNumber(addInvoiceInput.getOnlineTxnRefNumber());
+//        invoice.setComments(addInvoiceInput.getComments());
+//        invoice.setCollegeId(addInvoiceInput.getCollegeId());
+        
+        invoice = invoiceRepository.save(invoice);
+        logger.debug("Invoice save successfully : "+invoice);
+        return new AddInvoicePayload(invoice);
+    }
 }

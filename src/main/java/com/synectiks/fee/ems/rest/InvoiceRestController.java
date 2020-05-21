@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.synectiks.fee.business.service.CmsInvoiceService;
 import com.synectiks.fee.domain.Invoice;
 import com.synectiks.fee.domain.vo.CmsInvoice;
+import com.synectiks.fee.graphql.types.invoice.AddInvoiceInput;
+import com.synectiks.fee.graphql.types.invoice.AddInvoicePayload;
 
 import io.github.jhipster.web.util.ResponseUtil;
 
@@ -57,4 +60,11 @@ public class InvoiceRestController {
         logger.debug("REST request to get a CmsInvoice: {}", id);
         return ResponseUtil.wrapOrNotFound(Optional.of(this.cmsInvoiceService.getCmsInvoice(id)));
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/cmsinvoice")
+    public ResponseEntity<AddInvoicePayload> addInvoice(@RequestBody AddInvoiceInput addInvoiceInput) throws Exception {
+    	logger.debug("REST request to add an Invoice: {}");
+        return ResponseUtil.wrapOrNotFound(Optional.of(this.cmsInvoiceService.addInvoice(addInvoiceInput)));
+    }
+    
 }

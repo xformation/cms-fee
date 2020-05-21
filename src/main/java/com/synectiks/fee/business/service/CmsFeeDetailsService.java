@@ -36,90 +36,90 @@ public class CmsFeeDetailsService {
     public List<FeeDetails> getFeeDetailsListOnFilterCriteria(Map<String, String> criteriaMap){
     	FeeDetails fd = new FeeDetails();
     	boolean isFilter = false;
-    	if(criteriaMap.get("id") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("id"))) {
     		fd.setId(Long.parseLong(criteriaMap.get("id")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("feeParticularsName") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("feeParticularsName"))) {
     		fd.setFeeParticularsName(criteriaMap.get("feeParticularsName"));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("feeParticularDesc") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("feeParticularDesc"))) {
     		fd.setFeeParticularDesc(criteriaMap.get("feeParticularDesc"));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("studentType") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("studentType"))) {
     		fd.setStudentType(criteriaMap.get("studentType"));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("gender") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("gender"))) {
     		fd.setGender(criteriaMap.get("gender"));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("amount") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("amount"))) {
     		fd.setAmount(Float.parseFloat(criteriaMap.get("amount")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("status") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("status"))) {
     		fd.setStatus(criteriaMap.get("status"));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("createdBy") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("createdBy"))) {
     		fd.setCreatedBy(criteriaMap.get("createdBy"));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("createdOn") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("createdOn"))) {
     		fd.setCreatedOn(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("createdOn"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("updatedBy") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("updatedBy"))) {
     		fd.setUpdatedBy(criteriaMap.get("updatedBy"));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("updatedOn") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("updatedOn"))) {
     		fd.setUpdatedOn(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("updatedOn"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("startDate") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("startDate"))) {
     		fd.setStartDate(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("startDate"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("endDate") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("endDate"))) {
     		fd.setEndDate(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("endDate"), CmsConstants.DATE_FORMAT_dd_MM_yyyy ));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("branchId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("branchId"))) {
     		fd.setBranchId(Long.parseLong(criteriaMap.get("branchId")));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("departmentId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("departmentId"))) {
     		fd.setDepartmentId(Long.parseLong(criteriaMap.get("departmentId")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("batchId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("batchId"))) {
     		fd.setBatchId(Long.parseLong(criteriaMap.get("batchId")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("facilityId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("facilityId"))) {
     		fd.setFacilityId(Long.parseLong(criteriaMap.get("facilityId")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("facilityId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("facilityId"))) {
     		fd.setFacilityId(Long.parseLong(criteriaMap.get("facilityId")));
     		isFilter = true;
     	}
-    	if(criteriaMap.get("transportRouteId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("transportRouteId"))) {
     		fd.setTransportRouteId(Long.parseLong(criteriaMap.get("transportRouteId")));
     		isFilter = true;
     	}
     	
-    	if(criteriaMap.get("feeCategoryId") != null) {
+    	if(!CommonUtil.isNullOrEmpty(criteriaMap.get("feeCategoryId"))) {
     		FeeCategory fc = this.cmsFeeCategoryService.getFeeCategory(Long.parseLong(criteriaMap.get("feeCategoryId")));
     		if(fc != null) {
     			fd.setFeeCategory(fc);
