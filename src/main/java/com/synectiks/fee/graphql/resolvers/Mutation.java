@@ -81,16 +81,16 @@ public class Mutation implements GraphQLMutationResolver {
 
     @Autowired
     private DueDateRepository dueDateRepository;
-    
+
     @Autowired
     private PaymentRemainderRepository paymentRemainderRepository;
-    
+
     @Autowired
     private LateFeeRepository lateFeeRepository;
-    
+
     @Autowired
     private InvoiceRepository invoiceRepository;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -207,8 +207,8 @@ public class Mutation implements GraphQLMutationResolver {
         feeDetails.setFeeCategory(feeCategory);
         feeDetails.setBatchId(addFeeDetailsInput.getBatchId());
 
-        feeDetails.setFacilityId(facility.getId());
-        feeDetails.setTransportRouteId(transportRoute.getId());
+        feeDetails.setFacilityId(addFeeDetailsInput.getFacilityId());
+        feeDetails.setTransportRouteId(addFeeDetailsInput.getTransportRouteId());
         feeDetails.setDepartmentId(addFeeDetailsInput.getDepartmentId());
         feeDetails.createdOn(LocalDate.now());
         feeDetails.startDate(LocalDate.now());
@@ -410,7 +410,7 @@ public class Mutation implements GraphQLMutationResolver {
 		}
 		return vo;
 	}
-	
+
 
 	public CmsFeeSettingsVo getFeeSettingDueDateData(Long branchId, String paymentType) {
 //		Branch branch = new Branch();
@@ -429,5 +429,5 @@ public class Mutation implements GraphQLMutationResolver {
 		}
 		return vo;
 	}
-    
+
 }

@@ -38,19 +38,19 @@ import com.synectiks.fee.service.util.DateFormatUtil;
 public class Query implements GraphQLQueryResolver {
 
 	private final static Logger logger = LoggerFactory.getLogger(Query.class);
-    
+
 	@Autowired
     private ApplicationProperties applicationProperties;
-	
+
 	@Autowired
 	private InvoiceFilterProcessor invoiceFilterProcessor;
-	
+
     @Autowired
     private CommonService commonService;
-    
+
     @Autowired
     private FeeCategoryRepository feeCategoryRepository;
-    
+
     public List<CmsInvoice> searchInvoiceOnType(String invoiceType, Long branchId, Long academicYearId) throws Exception{
         return Lists.newArrayList(invoiceFilterProcessor.searchInvoiceOnType(invoiceType, branchId, academicYearId));
     }
@@ -70,8 +70,8 @@ public class Query implements GraphQLQueryResolver {
     	try {
     		String prefBatchUrl = applicationProperties.getPrefSrvUrl()+"/api/batch-by-filters";
 //    		List<Batch> batchList = this.commonService.getAllBatches(); for testing commented.
-    		List<Batch> batchList = this.commonService.getList(prefBatchUrl);
-    		
+    		List<Batch> batchList = this.commonService.getAllBatches();
+
 //        	List<CmsStudentTypeVo> studentTypeList = this.commonService.getAllStudentTypes();
 //        	List<CmsGenderVo> genderList = this.commonService.getAllGenders();
 
@@ -101,28 +101,29 @@ public class Query implements GraphQLQueryResolver {
                 }
                 cmsFcList.add(cfc);
             }
-            
+
             List<CmsFeeDetails> feeDetailsList = this.commonService.getFeeDetailsList(fcList);
-        	
-            List<TransportRoute> transportRouteList = this.commonService.getTransportRoute(null);//this.transportRouteRepository.findAll();
-            List<Facility> facilityList = this.commonService.getFacility(null);
-            
+
+//            List<TransportRoute> transportRouteList = this.commonService.getTransportRoute(null);//this.transportRouteRepository.findAll();
+            String prefFacilityUrl = applicationProperties.getPrefSrvUrl()+"/api/facility-by-filters";
+            List<Facility> facilityList = this.commonService.getFacility(prefFacilityUrl);
+
             FeeSetupDataCache cache = new FeeSetupDataCache();
         	cache.setBatches(batchList);
-        	
+
 //        	cache.setStudentTypes(studentTypeList);
 //        	cache.setGenders(genderList);
-        	
+
         	cache.setFeeCategory(cmsFcList);
         	cache.setFeeDetails(feeDetailsList);
         	cache.setFacility(facilityList);
-        	cache.setTransportRoute(transportRouteList);
+//        	cache.setTransportRoute(transportRouteList);
         	return cache;
     	}catch(Exception e) {
     		logger.error("Exception : ",e);
     		return null;
     	}
-    	
+
     }
 
 }

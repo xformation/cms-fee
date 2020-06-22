@@ -41,6 +41,9 @@ public class FeeDetailsRestController {
     private FeeDetailsRepository feeDetailsRepository;
 
     @Autowired
+    private CmsFeeDetailsService cmsFeeDetailsService;
+
+    @Autowired
     private CommonService commonService;
 
     @PostMapping("/cmsfeedetails-bulk-load")
@@ -196,4 +199,12 @@ public class FeeDetailsRestController {
         }
         return HttpStatus.OK.value();
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/feedetails-by-filters")
+    public List<FeeDetails> getFeeDetailsListOnFilterCriteria(@RequestParam Map<String, String> dataMap) throws Exception {
+        log.debug("Rest request to get list of Fee Details based on filter criteria");
+        List<FeeDetails> list = this.cmsFeeDetailsService.getFeeDetailsListOnFilterCriteria(dataMap);
+        return list;
+    }
+
 }
