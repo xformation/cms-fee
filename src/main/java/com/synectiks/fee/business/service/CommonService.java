@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.synectiks.fee.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.synectiks.fee.config.ApplicationProperties;
 import com.synectiks.fee.constant.CmsConstants;
-import com.synectiks.fee.domain.AcademicYear;
-import com.synectiks.fee.domain.Batch;
-import com.synectiks.fee.domain.Branch;
-import com.synectiks.fee.domain.Department;
-import com.synectiks.fee.domain.Facility;
-import com.synectiks.fee.domain.FeeCategory;
-import com.synectiks.fee.domain.FeeDetails;
-import com.synectiks.fee.domain.Section;
-import com.synectiks.fee.domain.TransportRoute;
 import com.synectiks.fee.domain.vo.CmsFeeDetails;
 import com.synectiks.fee.service.util.CommonUtil;
 import com.synectiks.fee.service.util.DateFormatUtil;
@@ -47,7 +39,7 @@ public class CommonService<T> {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
+
     public AcademicYear getAcademicYearById(Long academicYearId) {
         if(academicYearId == null) {
             return null;
@@ -56,7 +48,7 @@ public class CommonService<T> {
         AcademicYear temp = this.restTemplate.getForObject(prefUrl, AcademicYear.class);
         return temp;
     }
-    
+
     public AcademicYear getActiveAcademicYear() {
     	String prefUrl = applicationProperties.getPrefSrvUrl();
         String prefAcademicYearUrl = prefUrl+"/api/academic-years-by-filters?status=ACTIVE";
@@ -68,7 +60,7 @@ public class CommonService<T> {
         Collections.sort(acYearList, (o1, o2) -> o2.getId().compareTo(o1.getId()));
         return acYearList.get(0);
     }
-    
+
     public List<AcademicYear> getAcademicYear(String url) {
     	String prefUrl = applicationProperties.getPrefSrvUrl()+url;
         AcademicYear[] temp = this.restTemplate.getForObject(prefUrl, AcademicYear[].class);
@@ -79,7 +71,7 @@ public class CommonService<T> {
         Collections.sort(acYearList, (o1, o2) -> o2.getId().compareTo(o1.getId()));
         return acYearList;
     }
-    
+
     public Branch getBranchById(Long id) {
         if(id == null) {
             return null;
@@ -99,7 +91,7 @@ public class CommonService<T> {
         Collections.sort(branchList, (o1, o2) -> o2.getId().compareTo(o1.getId()));
         return branchList;
   	}
-    
+
 	public Department getDepartmentById(Long id) {
         if(id == null) {
             return null;
@@ -132,7 +124,7 @@ public class CommonService<T> {
 	    Collections.sort(batchList, (o1, o2) -> o1.getId().compareTo(o2.getId()));
 	    return batchList;
     }
-	
+
 	public Section getSectionById(Long id) {
         if(id == null) {
             return null;
@@ -158,7 +150,7 @@ public class CommonService<T> {
 			prefUrl = prefUrl + "?"+filters;
 		}
         Facility[] temp = this.restTemplate.getForObject(prefUrl, Facility[].class);
-        
+
 	    if(temp.length == 0) {
 	    	return Collections.emptyList();
 	    }
@@ -175,14 +167,14 @@ public class CommonService<T> {
         TransportRoute temp = this.restTemplate.getForObject(url, TransportRoute.class);
         return temp;
     }
-	
+
 	public List<TransportRoute> getTransportRoute(String filters) {
 		String url = applicationProperties.getTransportSrvUrl()+"/api/transport-route-by-filters";
 		if(CommonUtil.isNullOrEmpty(filters)) {
 			url = url + "?"+filters;
 		}
         TransportRoute[] temp = this.restTemplate.getForObject(url, TransportRoute[].class);
-        
+
 	    if(temp.length == 0) {
 	    	return Collections.emptyList();
 	    }
@@ -190,18 +182,18 @@ public class CommonService<T> {
 	    Collections.sort(tpList, (o1, o2) -> o1.getId().compareTo(o2.getId()));
 	    return tpList;
     }
-	
+
 	public List<CmsFeeDetails> getFeeDetailsList(List<FeeCategory> feeCategoryList) throws ParseException, Exception{
         if(feeCategoryList.size() == 0 ) {
             logger.warn("FeeCategory list is empty. Returning empty fee details list.");
             return Collections.emptyList();
         }
-        
+
         @SuppressWarnings("unchecked")
         List<FeeDetails> list = this.entityManager.createQuery("select l from FeeDetails l where l.feeCategory in (:fcList) ")
             .setParameter("fcList", feeCategoryList)
             .getResultList();
-        
+
         List<CmsFeeDetails> ls = new ArrayList<>();
         for(FeeDetails ff: list) {
             CmsFeeDetails cfd = CommonUtil.createCopyProperties(ff, CmsFeeDetails.class);
@@ -226,12 +218,12 @@ public class CommonService<T> {
         logger.debug("Returning list of fee details from JPA criteria query. Total records : "+list.size());
         return ls;
     }
-	
+
 	public List<T> getList(String url) {
 		List<T> temp = this.restTemplate.getForObject(url, List.class);
         return temp;
     }
-	
+
 //	public List<Subject> findAllSubjectByDepartmentAndBatch(Long departmentId, Long batchId) {
 //		logger.debug("Getting subjects based on department id : "+departmentId+", and batch id : "+batchId);
 //	    String prefUrl = applicationProperties.getPrefSrvUrl();
@@ -280,6 +272,14 @@ public class CommonService<T> {
 //        return null;
 //    }
 
-    
+    public Student getStudentById(Long id) {
+        if(id == null) {
+            return null;
+        }
+        String studenturl = applicationProperties.getStdSrvUrl();
+        String stdUrl = studenturl+"/api/student-by-id/"+id;
+        Student temp = this.restTemplate.getForObject(stdUrl, Student.class);
+        return temp;
+    }
 
 }

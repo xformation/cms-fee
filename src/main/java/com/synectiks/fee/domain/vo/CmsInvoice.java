@@ -37,13 +37,14 @@ public class CmsInvoice {
     private Long collegeId;
     private Long branchId;
     private Long academicYearId;
+    private Long studentId;
     private Student student;
     private AcademicYear academicYear;
     private String strPaymentDate;
     private String strNextPaymentDate;
     private String strUpdatedOn;
     private String bank;
-    
+
 	public Long getTotalInvoice() {
 		return totalInvoice;
 	}
@@ -230,6 +231,12 @@ public class CmsInvoice {
 	public void setBank(String bank) {
 		this.bank = bank;
 	}
-    
-	
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 }

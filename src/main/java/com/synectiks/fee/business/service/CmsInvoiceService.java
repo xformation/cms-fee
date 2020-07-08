@@ -410,6 +410,8 @@ public class CmsInvoiceService {
     	for(Invoice temp: list) {
 //            String stDt = DateFormatUtil.changeDateFormat(CmsConstants.DATE_FORMAT_dd_MM_yyyy, temp.getPaymentDate());
             CmsInvoice ctm = CommonUtil.createCopyProperties(temp, CmsInvoice.class);
+            Student st = this.commonService.getStudentById(ctm.getStudentId());
+            ctm.setStudent(st);
             ctm.setStrPaymentDate(DateFormatUtil.changeDateFormat(CmsConstants.DATE_FORMAT_dd_MM_yyyy, CmsConstants.DATE_FORMAT_yyyy_MM_dd, DateFormatUtil.changeDateFormat(CmsConstants.DATE_FORMAT_yyyy_MM_dd, DateFormatUtil.converUtilDateFromLocaDate(temp.getPaymentDate()))));
             ls.add(ctm);
         }
