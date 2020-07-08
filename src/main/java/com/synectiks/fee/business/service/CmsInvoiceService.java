@@ -49,19 +49,19 @@ public class CmsInvoiceService {
 
     @Autowired
     private CommonService commonService;
-    
+
     @Autowired
     private CmsFeeCategoryService cmsFeeCategoryService;
-    
+
     @Autowired
     private CmsFeeDetailsService cmsFeeDetailsService;
-    
+
     @Autowired
     private CmsDueDateService cmsDueDateService;
-    
+
     @Autowired
     private CmsPaymentRemainderService cmsPaymentRemainderService;
-    
+
     public List<Invoice> getInvoiceListOnFilterCriteria(Map<String, String> criteriaMap){
     	Invoice inv = new Invoice();
     	boolean isFilter = false;
@@ -105,22 +105,22 @@ public class CmsInvoiceService {
     		inv.setOnlineTxnRefNumber(criteriaMap.get("onlineTxnRefNumber"));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("paymentStatus") != null) {
     		inv.setPaymentStatus(criteriaMap.get("paymentStatus"));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("comments") != null) {
     		inv.setComments(criteriaMap.get("comments"));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("updatedBy") != null) {
     		inv.setUpdatedBy(criteriaMap.get("updatedBy"));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("bank") != null) {
     		inv.setBank(criteriaMap.get("bank"));
     		isFilter = true;
@@ -129,17 +129,17 @@ public class CmsInvoiceService {
     		inv.setUpdatedOn(DateFormatUtil.convertStringToLocalDate(criteriaMap.get("updatedOn"), CmsConstants.DATE_FORMAT_dd_MM_yyyy));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("academicYearId") != null) {
     		inv.setAcademicYearId(Long.parseLong(criteriaMap.get("academicYearId")));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("branchId") != null) {
     		inv.setBranchId(Long.parseLong(criteriaMap.get("branchId")));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("departmentId") != null) {
     		inv.setDepartmentId(Long.parseLong(criteriaMap.get("departmentId")));
     		isFilter = true;
@@ -148,7 +148,7 @@ public class CmsInvoiceService {
     		inv.setStudentId(Long.parseLong(criteriaMap.get("studentId")));
     		isFilter = true;
     	}
-    	
+
     	if(criteriaMap.get("feeCategoryId") != null) {
     		FeeCategory fc = this.cmsFeeCategoryService.getFeeCategory(Long.parseLong(criteriaMap.get("feeCategoryId")));
     		if(fc != null) {
@@ -156,7 +156,7 @@ public class CmsInvoiceService {
         		isFilter = true;
     		}
     	}
-    	
+
     	if(criteriaMap.get("feeDetailsId") != null) {
     		FeeDetails fd = this.cmsFeeDetailsService.getFeeDetails(Long.parseLong(criteriaMap.get("feeDetailsId")));
     		if(fd != null) {
@@ -164,7 +164,7 @@ public class CmsInvoiceService {
         		isFilter = true;
     		}
     	}
-    	
+
     	if(criteriaMap.get("dueDateId") != null) {
     		DueDate dd = this.cmsDueDateService.getDueDate(Long.parseLong(criteriaMap.get("dueDateId")));
     		if(dd != null) {
@@ -172,7 +172,7 @@ public class CmsInvoiceService {
         		isFilter = true;
     		}
     	}
-    	
+
     	if(criteriaMap.get("paymentRemainderId") != null) {
     		PaymentRemainder pr = this.cmsPaymentRemainderService.getPaymentRemainder(Long.parseLong(criteriaMap.get("paymentRemainderId")));
     		if(pr != null) {
@@ -180,7 +180,7 @@ public class CmsInvoiceService {
         		isFilter = true;
     		}
     	}
-    	
+
     	List<Invoice> list = null;
     	if(isFilter) {
     		logger.debug("Filter criteria object : ",inv);
@@ -189,11 +189,11 @@ public class CmsInvoiceService {
     		logger.debug("No filter criteria given");
     		list = this.invoiceRepository.findAll(Sort.by(Direction.DESC, "id"));
     	}
-        
+
     	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
     	return list;
     }
-    
+
     public List<CmsInvoice> getCmsInvoiceListOnFilterCriteria(Map<String, String> criteriaMap){
     	List<Invoice> invList = getInvoiceListOnFilterCriteria(criteriaMap);
     	List<CmsInvoice> list = new ArrayList<>();
@@ -204,7 +204,7 @@ public class CmsInvoiceService {
     	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
     	return list;
     }
-    
+
     public List<Invoice> getInvoiceList(Long branchId) {
     	List<Invoice> list = null;
     	if(branchId != null) {
@@ -218,7 +218,7 @@ public class CmsInvoiceService {
         Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
         return list;
     }
-    
+
     public List<CmsInvoice> getCmsInvoiceList(Long branchId) {
     	List<Invoice> invList = getInvoiceList(branchId);
     	List <CmsInvoice> list = new ArrayList<>();
@@ -229,7 +229,7 @@ public class CmsInvoiceService {
     	Collections.sort(list, (o1, o2) -> o2.getId().compareTo(o1.getId()));
         return list;
     }
-    
+
     public Invoice getInvoice(Long id){
     	Optional<Invoice> inv = this.invoiceRepository.findById(id);
     	if(inv.isPresent()) {
@@ -239,7 +239,7 @@ public class CmsInvoiceService {
     	logger.debug("Invoice object not found for the given id. "+id+". Returning null");
         return null;
     }
-    
+
     public CmsInvoice getCmsInvoice(Long id){
     	Invoice inv = getInvoice(id);
     	if(inv != null) {
@@ -250,7 +250,7 @@ public class CmsInvoiceService {
     	logger.debug("CmsInvoice object not found for the given id. "+id+". Returning null");
         return null;
     }
-    
+
     private CmsInvoice convertInvoiceToCmsInvoice(Invoice inv) {
     	if(inv != null) {
     		CmsInvoice cinv = CommonUtil.createCopyProperties(inv, CmsInvoice.class);
@@ -270,7 +270,7 @@ public class CmsInvoiceService {
     	}
     	return null;
     }
-    
+
 	public Long getTotalInvoice(Long branchId, Long academicYearId) {
     	Long a = getTotalPaidInvoice(branchId, academicYearId);
     	Long b = getTotalUnPaidInvoice(branchId, academicYearId);
@@ -285,7 +285,7 @@ public class CmsInvoiceService {
     	    //    		Branch branch = new Branch();
            //    		branch.setId(branchId);
 //            Branch branch = this.commonService.getBranchById(inv.getBranchId());
-        
+
 //        }
 
 //    	AcademicYear ac = new AcademicYear();
@@ -306,12 +306,12 @@ public class CmsInvoiceService {
 //    		Branch branch = new Branch();
 //    		branch.setId(branchId);
 //            Branch branch = this.commonService.getBranchById(inv.getBranchId());
-    		
+
 //    	}
 
 //    	AcademicYear ac = new AcademicYear();
 //    	ac.setId(academicYearId);
-    	
+
     	inv.setBranchId(branchId);
     	inv.setPaymentStatus("UNPAID");
 //    	AcademicYear ac = this.commonService.getAcademicYearById(inv.getAcademicYearId());
@@ -328,7 +328,7 @@ public class CmsInvoiceService {
 //    		Branch branch = new Branch();
 //    		branch.setId(branchId);
 //            Branch branch = this.commonService.getBranchById(inv.getBranchId());
-            
+
 //    	}
 //    	AcademicYear ac = new AcademicYear();
 //    	ac.setId(academicYearId);
@@ -497,7 +497,7 @@ public class CmsInvoiceService {
     public AddInvoicePayload addInvoice(AddInvoiceInput addInvoiceInput) {
     	logger.debug("Start saving invoice");
     	Invoice invoice   = new Invoice();
-        
+
     	if(addInvoiceInput.getFeeCategoryId() != null) {
     		FeeCategory feeCategory = this.cmsFeeCategoryService.getFeeCategory(addInvoiceInput.getFeeCategoryId());
         	if(feeCategory != null) {
@@ -514,7 +514,7 @@ public class CmsInvoiceService {
     		DueDate dueDate = cmsDueDateService.getDueDate(addInvoiceInput.getDueDateId());
     		if(dueDate != null) {
     			invoice.setDueDate(dueDate);
-    	        
+
     		}
     	}
     	if(addInvoiceInput.getPaymentRemainderId() != null) {
@@ -523,11 +523,12 @@ public class CmsInvoiceService {
     			invoice.setPaymentRemainder(paymentRemainder);
     		}
     	}
-        
+
 //        Student student = studentRepository.findById(addInvoiceInput.getStudentId()).get();
         invoice.setStudentId(addInvoiceInput.getStudentId());
         invoice.setBranchId(addInvoiceInput.getBranchId());
-        invoice.setAcademicYearId(addInvoiceInput.getAcademicyearId());
+        invoice.setDepartmentId(addInvoiceInput.getDepartmentId());
+        invoice.setAcademicYearId(addInvoiceInput.getAcademicYearId());
         invoice.setAmountPaid(addInvoiceInput.getAmountPaid());
         invoice.setModeOfPayment(addInvoiceInput.getModeOfPayment());
         invoice.setChequeNumber(addInvoiceInput.getChequeNumber());
@@ -541,11 +542,11 @@ public class CmsInvoiceService {
         invoice.setBank(addInvoiceInput.getBank());
         invoice.setOutStandingAmount(addInvoiceInput.getOutStandingAmount());
         //        invoice.setNextPaymentDate();
-        
+
 //        invoice.setOnlineTxnRefNumber(addInvoiceInput.getOnlineTxnRefNumber());
 //        invoice.setComments(addInvoiceInput.getComments());
 //        invoice.setCollegeId(addInvoiceInput.getCollegeId());
-        
+
         invoice = invoiceRepository.save(invoice);
         logger.debug("Invoice save successfully : "+invoice);
         return new AddInvoicePayload(invoice);

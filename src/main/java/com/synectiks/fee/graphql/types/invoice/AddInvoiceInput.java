@@ -9,7 +9,8 @@ public class AddInvoiceInput extends AbstractInvoiceInput{
     private Long paymentRemainderId;
     private Long branchId;
     private Long studentId;
-    private Long academicyearId;
+    private Long academicYearId;
+    private Long departmentId;
 
     public Long getFeeCategoryId() {
         return feeCategoryId;
@@ -59,12 +60,19 @@ public class AddInvoiceInput extends AbstractInvoiceInput{
         this.studentId = studentId;
     }
 
-    public Long getAcademicyearId() {
-        return academicyearId;
+    public Long getAcademicYearId() {
+        return academicYearId;
     }
 
-    public void setAcademicyearId(Long academicyearId) {
-        this.academicyearId = academicyearId;
+    public void setAcademicYearId(Long academicYearId) {
+        this.academicYearId = academicYearId;
     }
 
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
 }
