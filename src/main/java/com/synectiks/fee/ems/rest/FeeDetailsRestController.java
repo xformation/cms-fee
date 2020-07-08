@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import com.synectiks.fee.business.service.CommonService;
+import com.synectiks.fee.domain.DueDate;
 import com.synectiks.fee.repository.FeeDetailsRepository;
 import com.synectiks.fee.service.util.CommonUtil;
 import com.synectiks.fee.web.rest.errors.BadRequestAlertException;
@@ -205,6 +206,12 @@ public class FeeDetailsRestController {
         log.debug("Rest request to get list of Fee Details based on filter criteria");
         List<FeeDetails> list = this.cmsFeeDetailsService.getFeeDetailsListOnFilterCriteria(dataMap);
         return list;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/feedetails-by-id/{id}")
+    public ResponseEntity<FeeDetails> getFeedetails(@PathVariable Long id) throws Exception {
+        log.debug("REST request to get a FeeDetails : {}", id);
+        return ResponseUtil.wrapOrNotFound(Optional.of(this.cmsFeeDetailsService.getFeeDetails(id)));
     }
 
 }

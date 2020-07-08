@@ -192,4 +192,10 @@ public class FeeCategoryRestController {
         }
         return HttpStatus.OK.value();
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/feecategory-by-id/{id}")
+    public ResponseEntity<FeeCategory> getFeecategory(@PathVariable Long id) throws Exception {
+        log.debug("REST request to get a Fee Category : {}", id);
+        return ResponseUtil.wrapOrNotFound(Optional.of(this.cmsFeeCategoryService.getFeeCategory(id)));
+    }
 }

@@ -2,6 +2,7 @@ package com.synectiks.fee.ems.rest;
 
 import com.synectiks.fee.business.service.CmsDueDateService;
 import com.synectiks.fee.domain.DueDate;
+import com.synectiks.fee.domain.FeeCategory;
 import com.synectiks.fee.repository.DueDateRepository;
 import com.synectiks.fee.service.util.CommonUtil;
 import com.synectiks.fee.web.rest.errors.BadRequestAlertException;
@@ -190,6 +191,12 @@ public class DueDateRestController {
         }
         return HttpStatus.OK.value();
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/duedate-by-id/{id}")
+    public ResponseEntity<DueDate> getDueDate(@PathVariable Long id) throws Exception {
+        log.debug("REST request to get a DueDate : {}", id);
+        return ResponseUtil.wrapOrNotFound(Optional.of(this.cmsDueDateService.getDueDate(id)));
     }
 
 }
